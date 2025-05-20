@@ -1,0 +1,93 @@
+---
+description: General repository rules
+globs: *,**/*
+alwaysApply: true
+---
+
+# Development Guide for Natural Stupidity
+- Files must end with an empty line
+- This is a golang project
+
+
+## Build/Test Commands
+- Run specific test: `go test -v ./path/to/package/...`
+- Run single test: `go test -v ./path/to/package -run TestName`
+- Run linter/typecheck: `go vet -printf=false ./...`
+- Format code: `gofmt -s -w .`
+- Clean/tidy dependencies: `make go-tidy`
+- Build project: `make project`
+- Set up environment: `make environment`
+- Update Swagger docs: `swag init -g main.go` (run from service directory)
+
+## Code Style Guidelines
+- Use Go standard library error handling (return errors, don't panic)
+- Follow Go naming conventions (CamelCase for exported, camelCase for private)
+- Organize imports in three groups: standard library, external, internal
+- Use interfaces for testability with mock implementations
+- Structure modules with api/service/entity layers
+- Add meaningful test cases (table-driven tests preferred)
+- Use dependency injection via `go.uber.org/dig`
+- Document public API with godoc-compatible comments
+- Add context to errors with `fmt.Errorf("doing X: %w", err)`
+- Always ensure a newline exists at the end of a file, and only one newline
+- Follow SOLID as much as possible. Present reasons when it cannot be followed
+
+## Repository specific rules
+- We organize the code by layers:
+    - `api` folder to have the http handlers
+        - `api/request` for the http requests
+        - `api/response` for the http responses
+    - `repository` for the application repositories. The repository is the responsible for performing the queries and returning the models
+    - `repository/model` for the application models. We use GORM, and they should have gorm tags and implement the core `model.Model` interface
+    - `service` is the responsible for the application business logic
+    - `docs` is a folder usually generated with [swag](mdc:https:/github.com/swaggo/swag)
+- A service cannot call another service, if one needs information from another, it should be done so in the handler
+- A layer can read the object provided by another layer, but cannot write to it, e.g.: a service cannot write a model, it should send the information to the repository and the repository performs this
+- Handlers should be documented with go doc compatible with [swag](mdc:https:/github.com/swaggo/swag). 
+
+## Development Workflow
+- Follow conventional commits format: `feat/fix/chore/docs/style/refactor/perf/test`
+- Branch naming convention: `username/feature-description` or `feature/description`
+- Include service name in commit messages when applicable
+- Document significant API changes in PR descriptions
+- Update API documentation when adding or modifying endpoints
+- Run tests before submitting PRs with `go test ./...`
+
+## Testing Standards
+- Write both unit 
+- Use table-driven tests with descriptive test case names
+- Create mock repositories with configurable error states
+- Test both success and error paths
+- Mock external dependencies in tests (services, repositories)
+- Separate test implementations from production code
+
+## Deployment & Infrastructure
+- Each service must include a Dockerfile and Makefile
+- Environment configuration should use .env files (add .env.example to repository)
+- Document service dependencies in README.md
+- Ensure Dockerfiles follow consistent patterns across services
+- Implement feature toggles for gradual rollout of new functionality
+
+## Observability
+- Use structured logging with appropriate log levels
+- Implement request tracing with trace IDs across services
+- Record auditable actions in the audit_log service
+- Expose metrics endpoints for service monitoring
+- Handle and report panics gracefully
+
+## Instructions for AI Agents
+- Please create a `.ai` folder at repository root level if it does not exist
+    - Inside the `.ai` folder, please document every prompt made with a PROMPT_HISTORY.md
+- Inside the project you are required to work in, please create a `docs` folder. It should contain:
+    - a file called `PLAN.md` with the plans that we create for the base of the project
+    - a file called `FEATURE.md` with every plan of features that are required afterwards
+    - a file called `FIX.md` with every plan of fixes requests after user interactions
+    - a file called `TECHNICAL.md` with the technical decisons made for a specific project
+- Use the documentation contained in each project `docs/*.md` to understand what have been made and ajust your behaviour. This should help preventing errors
+
+## Global Technical Decisions and IMPORTANT INFORMATION
+- We use @Gin Gonic as our HTTP framework
+- Our main Cloud provider is AWS, we have locally available a "local stack" instance
+- There is locally available a local kubernetes stack using OrbStack. All projects are usually available with the pattern `https://<project_name>.df.test`. You may use `kubectl` to access the cluster
+- ALWAYS VERIFY THAT YOU CHANGES WORK AND DO WHAT YOU EXPECT THEM TO DO. If you are not sure, ask me for the next steps
+

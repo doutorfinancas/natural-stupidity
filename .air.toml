@@ -1,0 +1,17 @@
+# .air.toml - Air live reload configuration
+
+[build]
+  cmd = "go build -o tmp/main main.go"
+  bin = "tmp/main"
+  include_dir = ["."]
+  exclude_dir = ["docs", "vendor", "tmp"]
+  exclude_file = ["Dockerfile", ".env.example", "docker-compose.yml"]
+
+[run]
+  cmd = "tmp/main"
+
+[color]
+  main = "yellow"
+  watcher = "cyan"
+  build = "green"
+  runner = "magenta" 
