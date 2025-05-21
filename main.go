@@ -140,7 +140,33 @@ func main() {
 		// Protected HTML view routes
 		authGroup := r.Group("/", api.AuthRequired())
 		authGroup.GET("/", func(c *gin.Context) {
-			c.HTML(200, "index.html", nil)
+			// Build events for calendar
+			vacs, err := vacSvc.List()
+			if err != nil {
+				c.String(500, err.Error())
+				return
+			}
+			users, _ := userSvc.List()
+			userMap := make(map[uint]string)
+			for _, u := range users {
+				userMap[u.ID] = u.Name
+			}
+			type Event struct {
+				Title string
+				Start string
+				End   string
+				Color string
+			}
+			var events []Event
+			for _, v := range vacs {
+				events = append(events, Event{
+					Title: userMap[v.UserID],
+					Start: v.StartDate.Format("2006-01-02"),
+					End:   v.EndDate.Format("2006-01-02"),
+					Color: "#3788d8",
+				})
+			}
+			c.HTML(200, "index.html", gin.H{"Events": events})
 		})
 		authGroup.GET("/ui/users", func(c *gin.Context) {
 			users, err := userSvc.List()
@@ -365,6 +391,36 @@ func main() {
 				})
 			}
 			c.HTML(200, "vacations.html", gin.H{"Vacations": vacViews})
+		})
+
+		// Calendar UI route
+		authGroup.GET("/ui/calendar", func(c *gin.Context) {
+			vacs, err := vacSvc.List()
+			if err != nil {
+				c.String(500, err.Error())
+				return
+			}
+			users, _ := userSvc.List()
+			userMap := make(map[uint]string)
+			for _, u := range users {
+				userMap[u.ID] = u.Name
+			}
+			type Event struct {
+				Title string
+				Start string
+				End   string
+				Color string
+			}
+			var events []Event
+			for _, v := range vacs {
+				events = append(events, Event{
+					Title: userMap[v.UserID],
+					Start: v.StartDate.Format("2006-01-02"),
+					End:   v.EndDate.Format("2006-01-02"),
+					Color: "#3788d8",
+				})
+			}
+			c.HTML(200, "calendar.html", gin.H{"Events": events})
 		})
 
 		// Team UI routes
