@@ -420,7 +420,7 @@ func main() {
 					Color: "#3788d8",
 				})
 			}
-			c.HTML(200, "calendar.html", gin.H{"Events": events})
+			c.HTML(200, "calendar.html.tpl", gin.H{"Events": events})
 		})
 
 		// Team UI routes
