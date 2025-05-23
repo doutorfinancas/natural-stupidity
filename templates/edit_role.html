@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit Role - Natural Stupidity</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5" style="max-width: 400px;">
+    <h1 class="mb-4">Edit Role</h1>
+    <form method="post" action="/ui/roles/{{ .Role.ID }}/edit">
+      {{ if .Error }}<div class="alert alert-danger">{{ .Error }}</div>{{ end }}
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input name="name" class="form-control" value="{{ .Role.Name }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Level</label>
+        <input type="number" name="level" class="form-control" value="{{ .Role.Level }}" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Save</button>
+      <a href="/ui/roles" class="btn btn-secondary">Cancel</a>
+      <button type="submit" formaction="/ui/roles/{{ .Role.ID }}/delete" formmethod="post" class="btn btn-danger float-end">Delete</button>
+    </form>
+  </div>
+</body>
+</html> 

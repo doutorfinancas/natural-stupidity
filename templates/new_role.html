@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create Role - Natural Stupidity</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5" style="max-width: 400px;">
+    <h1 class="mb-4">Create Role</h1>
+    <form method="post" action="/ui/roles/new">
+      {{ if .Error }}<div class="alert alert-danger">{{ .Error }}</div>{{ end }}
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input name="name" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Level</label>
+        <input type="number" name="level" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Create</button>
+      <a href="/ui/roles" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</body>
+</html> 
